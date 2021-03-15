@@ -23,7 +23,7 @@ char whichFrame = 0;
 char caseVal = 0;
 
 long previousMillis = 0;
-long intervals = 1000;
+long intervals = 500;
 
 void setup() {
   // put your setup code here, to run once:
@@ -42,20 +42,15 @@ void loop() {
 
   button1.update();
   if (button1.rose()) {
-    caseVal = (caseVal + 1) % 4;
+    caseVal = (caseVal + 1) % 5;
   }
 
   switch (caseVal) {
-    case 0: off(); break;
-    case 1:
-      on();
-      break;
-    case 2:
-      simple();
-      break;
-    case 3:
-      anime();
-      break;
+    case 0: off();       break;
+    case 1: on();        break;
+    case 2: simple();    break;
+    case 3: anime();     break;
+    case 4: rainbow(10); break;
   }
 }
 
@@ -65,10 +60,10 @@ void off() {
 }
 
 void on() {
-  strip.setPixelColor(0, 0, 255, 255);
-  strip.setPixelColor(1, 0, 255, 255);
-  strip.setPixelColor(2, 0, 255, 255);
-  strip.setPixelColor(3, 0, 255, 255);
+  strip.setPixelColor(0, 0, 0, 255);
+  strip.setPixelColor(1, 0, 0, 255);
+  strip.setPixelColor(2, 0, 0, 255);
+  strip.setPixelColor(3, 0, 0, 255);
   strip.setPixelColor(4, 255, 255, 255);
   strip.setPixelColor(5, 255, 255, 255);
   strip.setPixelColor(6, 255, 0, 0);
@@ -93,45 +88,37 @@ void on() {
   strip.show();
 }
 
+
+
 void simple() {
 
-  for (int j = 0; j < strip.numPixels(); j++) {
+  for (int j = 0; j < 255; j = j + 2) {
+    for (int i = 0; i < strip.numPixels(); i++) {
 
-    for (int i = 0; i < 255; i++) {
       button1.update();
-      strip.setPixelColor(j, 51, 204, 51);
+      if (button1.rose()) {
+        caseVal = (caseVal + 1) % 5;
+      }
 
-      strip.setBrightness(i);
-      strip.show();
-    }
-    for (int i = 255; i < 255; i--) {
-      button1.update();
-      strip.setPixelColor(j, 51, 204, 51);
-
-      strip.setBrightness(i);
+      strip.setPixelColor(i, 51, 255, 51);
+      strip.setBrightness(j);
       strip.show();
     }
   }
+}
 
 
-  for (int j = 0; j < strip.numPixels(); j++) {
 
-    for (int i = 0; i < 255; i++) {
-      button1.update();
-      strip.setPixelColor(j, 255, 0, 255);
-
-      strip.setBrightness(i);
-      strip.show();
+// Rainbow from strand test
+void rainbow(int wait) {
+  for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
+    for (int i = 0; i < strip.numPixels(); i++) {
+      int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
+      strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
     }
-    for (int i = 255; i < 255; i--) {
-      button1.update();
-      strip.setPixelColor(j, 255, 0, 255);
-
-      strip.setBrightness(i);
-      strip.show();
-    }
+    strip.show(); // Update strip with new contents
+    delay(wait);  // Pause for a moment
   }
-
 }
 
 
